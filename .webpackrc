@@ -10,7 +10,8 @@
     "development": {
       "extraBabelPlugins": [
         "dva-hmr"
-      ]
+      ],
+      "publicPath": "/"
     }
   },
   "ignoreMomentLocale": true,
@@ -18,7 +19,7 @@
   "html": {
     "template": "./src/index.ejs"
   },
-  "publicPath": "/",
+  "publicPath": "//s.musixise.com/octave-admin/",
   "disableDynamicImport": true,
   "hash": true
 }
