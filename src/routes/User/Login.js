@@ -44,9 +44,8 @@ export default class LoginPage extends Component {
 
   build124 = () => {
     // TODO replace url address
-    // audio.musixise.com/AhA4dSmF_test.txt
-    const url = '//audio.musixise.com/AhA4dSmF_test.txt';
     // const url = 'http://oiqvdjk3s.bkt.clouddn.com/AhA4dSmF_test.txt';
+    const url = '//audio.musixise.com/AhA4dSmF_test.txt';
     const id = 124;
     const request = new XMLHttpRequest();
     request.open('GET', url, true);
@@ -55,88 +54,69 @@ export default class LoginPage extends Component {
       if (request.readyState === 4 && request.status === 200) {
         const type = request.getResponseHeader('Content-Type');
         if (type.indexOf('text') !== -1) {
-          const DOT_WIDTH = [0.6, 0.5, 0.5, 0.6, 0.4];
-          // const OFFSET = [2.1, 2.2, 2.3];
-          const OUTER_RADIUS = [
-            6.6,
-            6.4,
-            6.5,
-            6.6,
-            6.4,
-            6.4,
-            6.6,
-            6.6,
-            6.4,
-            6.5,
-            6.6,
-            6.4,
-            6.4,
-            6.5,
-            6.6,
-            6.4,
-            6.5,
-            6.6,
-            6.6,
-            6.4,
-            6.5,
-            6.6,
-            6.4,
-            6.4,
-            6.6,
-          ];
-          const INNER_RADIUS = [
-            5.7,
-            5.7,
-            5.8,
-            5.9,
-            5.9,
-            5.7,
-            5.9,
-            5.7,
-            5.9,
-            5.8,
-            5.9,
-            5.9,
-            5.7,
-            5.8,
-            5.7,
-            5.9,
-            5.8,
-            5.9,
-            5.7,
-            5.7,
-            5.8,
-            5.7,
-            5.9,
-            5.7,
-            5.9,
-          ];
-          const DOT_HEIGHT = [0.9, 0.7, 0.8, 0.6, 1];
+
+       // //16
+          const DOT_WIDTH = [0.3, 0.4, 0.3, 0.5, 0.4, 0.5, 0.4, 0.6, 0.5, 0.6,
+           0.5, 0.3, 0.6, 0.3, 0.6, 0.4];
+          const OFFSET = 2.2;
+          const OUTER_RADIUS = 6.6;
+          const INNER_RADIUS = 5.9;
+          const DOT_HEIGHT = [0.9, 1.0, 0.8, 1.1];
+          const ANGLE = [-45, 35, -35, 45];
           // TODO:loop it with for let
-          // const m = 0;
+
+          let m=0;
+
           for (let i = 0; i < 1; i += 1) {
-            for (let j = 0; j < 1; j += 1) {
-              // buildModelWithParam(JSON.parse(request.responseText), id, 0.3, 2.2, 6.6, 5.9);
-              buildModelWithParam(
-                JSON.parse(request.responseText),
-                `${i}-${j}`,
-                DOT_WIDTH[j],
-                2.2,
-                OUTER_RADIUS[i * 5 + j],
-                INNER_RADIUS[i * 5 + j],
-                DOT_HEIGHT[i]
-              );
-              console.log(i * 5 + j);
+            for (let j = 0; j < 4; j += 1) {
+                  // buildModelWithParam(JSON.parse(request.responseText), id, 0.3, 2.2, 6.6, 5.9);
+                  m=i*4+j+1;
+                  buildModelWithParam(
+                    JSON.parse(request.responseText),
+                    id+'-'+m,
+                    DOT_WIDTH[m-1],
+                    2.2,
+                    OUTER_RADIUS,
+                    INNER_RADIUS,
+                    DOT_HEIGHT[i],
+                    ANGLE[j]
+                  );
+                  // console.log(i*4+j+1);
             }
           }
+
+      //4
+          // const DOT_WIDTH = [0.3, 0.4, 0.5, 0.6];
+          // const OFFSET = 2.2;
+          // const OUTER_RADIUS = 6.6;
+          // const INNER_RADIUS = 5.9;
+          // const DOT_HEIGHT = 1.0;
+          // const ANGLE = [-45, 35, -35, 45];
+          // TODO:loop it with for let
+
+
+          //   for (let j = 0; j < 4; j += 1) {
+          //         // buildModelWithParam(JSON.parse(request.responseText), id, 0.3, 2.2, 6.6, 5.9);
+          //         buildModelWithParam(
+          //           JSON.parse(request.responseText),
+          //           id+'-0'+(j+1),
+          //           DOT_WIDTH[j],
+          //           2.2,
+          //           OUTER_RADIUS,
+          //           INNER_RADIUS,
+          //           1.0,
+          //           ANGLE[j]
+          //         );
+          // }
           // buildModelWithParam(
           //   JSON.parse(request.responseText),
-          //   id,
+          //   id+'-'+m,
           //   DOT_WIDTH[0],
           //   OFFSET[0],
-          //   OUTER_RADIUS[0],
-          //   INNER_RADIUS[0],
-          //   DOT_HEIGHT[0]
+          //   OUTER_RADIUS,
+          //   INNER_RADIUS,
+          //   DOT_HEIGHT[0],
+          //   ANGLE[0]
           // );
         }
       }

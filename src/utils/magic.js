@@ -125,8 +125,9 @@ export function buildModel(items, workId) {
     const OFFSET = 2.2 //1.95 is center
     const OUTER_RADIUS = 6.6
     const INNER_RADIUS = 5.9
+    const ANGLE = 30
     function generatePin(noteSec, noteNo) {
-      return rotate(90, [1, 0, 4 * noteSec * RATIO / 15], cylinder({
+      return rotate(90, [1, 0, 4 * noteSec * RATIO / 15+ANGLE], cylinder({
         h: 1,
         r: DOT_WIDTH / 2,
         center: true,
@@ -262,8 +263,9 @@ export function buildModel(items, workId) {
   const OFFSET = 2.2 //1.95 is center
   const OUTER_RADIUS = 6.6
   const INNER_RADIUS = 5.9
+  const ANGLE = 30
   function generatePin(noteSec, noteNo) {
-    return rotate([90, 0, (360 * noteSec * RATIO / 15)-30], cube({
+    return rotate([90, 0, (360 * noteSec * RATIO / 15)+ANGLE], cube({
       size:[DOT_WIDTH,DOT_WIDTH,1],
       center: true,
       fn:100,
@@ -293,7 +295,8 @@ export function buildModelWithParam(
   OFFSET,
   OUTER_RADIUS,
   INNER_RADIUS,
-  DOT_HEIGHT
+  DOT_HEIGHT,
+  ANGLE
 ) {
   console.log('== Enter RealMagic ==');
   const tasksObj = {};
@@ -401,8 +404,9 @@ export function buildModelWithParam(
   const OUTER_RADIUS = ${OUTER_RADIUS}
   const INNER_RADIUS = ${INNER_RADIUS}
   const DOT_HEIGHT = ${DOT_HEIGHT}
+  const ANGLE = ${ANGLE}
   function generatePin(noteSec, noteNo) {
-    return rotate([90, 0, (360 * noteSec * RATIO / 15)], cube({
+    return rotate([90, 0, (360 * noteSec * RATIO / 15)+ANGLE], cube({
       size:[DOT_WIDTH,DOT_WIDTH,DOT_HEIGHT],
       center: true,
       fn:100,
