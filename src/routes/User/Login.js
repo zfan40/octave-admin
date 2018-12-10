@@ -44,7 +44,9 @@ export default class LoginPage extends Component {
 
   build124 = () => {
     // TODO replace url address
-    const url = 'http://oiqvdjk3s.bkt.clouddn.com/AhA4dSmF_test.txt';
+    // audio.musixise.com/AhA4dSmF_test.txt
+    const url = '//audio.musixise.com/AhA4dSmF_test.txt';
+    // const url = 'http://oiqvdjk3s.bkt.clouddn.com/AhA4dSmF_test.txt';
     const id = 124;
     const request = new XMLHttpRequest();
     request.open('GET', url, true);
@@ -112,8 +114,8 @@ export default class LoginPage extends Component {
           const DOT_HEIGHT = [0.9, 0.7, 0.8, 0.6, 1];
           // TODO:loop it with for let
           // const m = 0;
-          for (let i = 0; i < 5; i += 1) {
-            for (let j = 0; j < 5; j += 1) {
+          for (let i = 0; i < 1; i += 1) {
+            for (let j = 0; j < 1; j += 1) {
               // buildModelWithParam(JSON.parse(request.responseText), id, 0.3, 2.2, 6.6, 5.9);
               buildModelWithParam(
                 JSON.parse(request.responseText),
