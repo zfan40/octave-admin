@@ -64,6 +64,19 @@ const menuData = [{
     }],
   }],
 }, {
+  name: '商店',
+  icon: 'profile',
+  path: 'shop',
+  children: [{
+      name: '产品列表',
+      path: 'products-list',
+
+  }, {
+      name: '订单列表',
+      path: 'orders-list',
+  }]
+
+},{
   name: '详情页',
   icon: 'profile',
   path: 'profile',
