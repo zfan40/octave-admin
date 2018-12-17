@@ -227,7 +227,7 @@ export async function updateProduct(params) {
   return request(`https://api.octave-love.com/api/v1/admin/shop/products`, {
     method: 'PUT',
     headers,
-    body:JSON.stringify(params)
+    body:params
 
   });
 }
