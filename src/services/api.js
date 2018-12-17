@@ -211,3 +211,43 @@ export async function addMusixiser(params) {
   //   },
   // });
 }
+
+//产品接口
+
+export async function addProduct(params) {
+  return request(`https://api.octave-love.com/api/v1/admin/shop/products`, {
+    method: 'POST',
+    headers,
+    body:params
+
+  });
+}
+
+export async function updateProduct(params) {
+  return request(`https://api.octave-love.com/api/v1/admin/shop/products`, {
+    method: 'PUT',
+    headers,
+    body:JSON.stringify(params)
+
+  });
+}
+
+export async function queryProduct(params) {
+  console.log("queryProduct", params)
+  return request( `https://api.octave-love.com/api/v1/admin/shop/products?a=1&page=${params.currentPage}&size=${params.pageSize}`, {
+      headers,
+    }
+  );
+}
+
+export async function removeProduct(params) {
+  return request(`https://api.octave-love.com/api/v1/admin/shop/products/${params.id}`, {
+    method: 'DELETE',
+    headers,
+    body: {
+      ...tokenObj,
+      ...params,
+      method: 'delete',
+    },
+  });
+}
