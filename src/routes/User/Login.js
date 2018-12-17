@@ -62,7 +62,8 @@ export default class LoginPage extends Component {
           const OUTER_RADIUS = 6.6;
           const INNER_RADIUS = 5.9;
           const DOT_HEIGHT = [0.9, 1.0, 0.8, 1.1];
-          const ANGLE = [-45, 35, -35, 45];
+          // const ANGLE = [-45, 35, -35, 45];
+          const ANGLE = [0,0,0,0];
           // TODO:loop it with for let
 
           let m=0;
