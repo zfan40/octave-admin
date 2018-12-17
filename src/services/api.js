@@ -227,7 +227,7 @@ export async function updateProduct(params) {
   return request(`https://api.octave-love.com/api/v1/admin/shop/products`, {
     method: 'PUT',
     headers,
-    body:JSON.stringify(params)
+    body:params
 
   });
 }
@@ -249,5 +249,22 @@ export async function removeProduct(params) {
       ...params,
       method: 'delete',
     },
+  });
+}
+
+export async function queryOrders(params) {
+  console.log("queryOrders", params)
+  return request( `https://api.octave-love.com/api/v1/admin/shop/orders?a=1&page=${params.currentPage}&size=${params.pageSize}`, {
+      headers,
+    }
+  );
+}
+
+export async function updateOrders(params) {
+  return request(`https://api.octave-love.com/api/v1/admin/shop/orders`, {
+    method: 'PUT',
+    headers,
+    body:params
+
   });
 }
