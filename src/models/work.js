@@ -1,4 +1,4 @@
-import { queryWork, removeWork, addWork } from '../services/api';
+import { queryWork, removeWork, addWork, getMusixiserById } from '../services/api';
 
 export default {
   namespace: 'work',
@@ -13,6 +13,12 @@ export default {
   effects: {
     *fetch({ payload }, { call, put }) {
       const response = yield call(queryWork, payload);
+      for (let i = 0; i <= response.data.list.length - 1; i++) {
+        const userVORes = yield call(getMusixiserById, {
+          id: response.data.list[i].userId,
+        });
+        response.data.list[i].userVO = userVORes.data;
+      }
       const { current, total, size, list } = response.data;
       const formatterResponse = {
         list,
