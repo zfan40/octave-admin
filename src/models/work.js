@@ -1,4 +1,4 @@
-import { queryWork, removeWork, addWork, getMusixiserById } from '../services/api';
+import { queryWork, removeWork, addWork, updateWork, getMusixiserById } from '../services/api';
 
 export default {
   namespace: 'work',
@@ -35,11 +35,10 @@ export default {
     },
     *add({ payload, callback }, { call, put }) {
       const response = yield call(addWork, payload);
-      yield put({
-        type: 'save',
-        payload: response,
-      });
       if (callback) callback();
+    },
+    *update({ payload, callback }, { call, put }) {
+      const response = yield call(updateWork, payload);
     },
     *remove({ payload }, { call }) {
       yield call(removeWork, payload);

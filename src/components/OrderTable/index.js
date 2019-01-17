@@ -279,7 +279,7 @@ class OrderTable extends PureComponent {
                     />
                   </div>
                   <div style={{ flex: 1 }}>
-                    <span>凸点高度</span>
+                    <span>凸点高度（center一半）</span>
                     <InputNumber
                       min={0.5}
                       max={1.5}
@@ -319,8 +319,8 @@ class OrderTable extends PureComponent {
                   <div style={{ flex: 1 }}>
                     <span>音桶内径</span>
                     <InputNumber
-                      min={6.3}
-                      max={5.7}
+                      min={5.0}
+                      max={6.7}
                       step={0.1}
                       defaultValue={DEFAULT_INNER_RADIUS}
                       onChange={(v) => {

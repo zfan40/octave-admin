@@ -149,7 +149,13 @@ export async function removeWork(params) {
     },
   });
 }
-
+export async function updateWork(params) {
+  return request(`https://api.octave-love.com/api/v1/admin/works`, {
+    method: 'PUT',
+    headers,
+    body: params,
+  });
+}
 export async function addWork(params) {
   return request('/api/rule', {
     method: 'POST',

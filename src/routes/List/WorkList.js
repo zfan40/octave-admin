@@ -5,10 +5,11 @@ import WorkTable from '../../components/WorkTable';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 
 import styles from './TableList.less';
-
+import WorkModal from '../../components/Editor/CreateWorkModal';
 const FormItem = Form.Item;
 const { Option } = Select;
 const getValue = obj => Object.keys(obj).map(key => obj[key]).join(',');
+
 
 @connect(({ work, loading }) => ({
   work,
@@ -23,12 +24,13 @@ export default class TableList extends PureComponent {
   };
 
   componentDidMount() {
+    this.pageSize = 10
     const { dispatch } = this.props;
     dispatch({
       type: 'work/fetch',
       payload: {
         currentPage: 1,
-        pageSize: 50,
+        pageSize: this.pageSize,
       },
     });
   }
@@ -42,7 +44,7 @@ export default class TableList extends PureComponent {
       newObj[key] = getValue(filtersArg[key]);
       return newObj;
     }, {});
-
+    this.pageSize = pagination.pageSize
     const params = {
       currentPage: pagination.current,
       pageSize: pagination.pageSize,
@@ -101,7 +103,9 @@ export default class TableList extends PureComponent {
         break;
     }
   }
-
+  handleCreateWork = res => {
+    console.log(res)
+  }
   handleSelectRows = (rows) => {
     this.setState({
       selectedRows: rows,
@@ -117,19 +121,31 @@ export default class TableList extends PureComponent {
         type: 'work/fetch',
         payload: {
           currentPage: 1,
-          pageSize: 50,
+          pageSize: this.pageSize,
         },
       });
     });
   }
+  handleEditWork = workInfo => {
+    const { dispatch } = this.props;
+    dispatch({
+      type: 'work/update',
+      payload: workInfo,
+    }).then(()=>{
+      dispatch({
+        type: 'work/fetch',
+        payload: {
+          currentPage: 1,
+          pageSize: this.pageSize,
+        },
+      })
+    });
+  }
   handleSearch = (e) => {
     e.preventDefault();
-
     const { dispatch, form } = this.props;
-
     form.validateFields((err, fieldsValue) => {
       if (err) return;
-
       const values = {
         ...fieldsValue,
         updatedAt: fieldsValue.updatedAt && fieldsValue.updatedAt.valueOf(),
@@ -170,6 +186,9 @@ export default class TableList extends PureComponent {
           </Col>
           <Col md={8} sm={24}>
             <span className={styles.submitButtons}>
+              <WorkModal record={{}} onOk={this.handleCreateWork} >
+                <Button type="primary">创建</Button>
+              </WorkModal>
               <Button type="primary" htmlType="submit">查询</Button>
               <Button style={{ marginLeft: 8 }} onClick={this.handleFormReset}>重置</Button>
               <a style={{ marginLeft: 8 }} onClick={this.toggleForm}>
@@ -297,9 +316,11 @@ export default class TableList extends PureComponent {
               onSelectRow={this.handleSelectRows}
               onChange={this.handleStandardTableChange}
               onDeleteWork={this.handleDeleteWork}
+              onEditWork={this.handleEditWork}
             />
           </div>
         </Card>
+        
       </PageHeaderLayout>
     );
   }

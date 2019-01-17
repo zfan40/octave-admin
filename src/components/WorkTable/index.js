@@ -3,6 +3,7 @@ import React, { PureComponent, Fragment } from 'react';
 import { Table, Alert, Divider, Popconfirm, InputNumber } from 'antd';
 import styles from './index.less';
 import { buildModel, preview, buildModelWithParam } from '../../utils/magic';
+import WorkModal from '../Editor/CreateWorkModal';
 // const statusMap = ['default', 'processing', 'success', 'error'];
 const DEFAULT_DOT_WIDTH = 0.3;
 const DEFAULT_DOT_HEIGHT = 1;
@@ -136,6 +137,13 @@ class WorkTable extends PureComponent {
         break;
     }
   };
+  handleUpdate(workInfo,data) {
+    console.log(workInfo)
+    console.log('new data',data)
+    workInfo.url = data.url[0].response.data// //img.musixise.com/itB012vg_castle.mid
+    const {onEditWork} = this.props
+    onEditWork(workInfo)
+  }
   render() {
     const { selectedRowKeys, totalCallNo } = this.state;
     const {
@@ -194,6 +202,10 @@ class WorkTable extends PureComponent {
             <Popconfirm title="确认删除？" onConfirm={() => this.deleteWorkById(b.id)}>
               <a>删除</a>
             </Popconfirm>
+            <Divider type="vertical" />
+            <WorkModal record={b} onOk={res => this.handleUpdate(b, res)}>
+              <a>编辑</a>
+            </WorkModal>
           </Fragment>
         ),
       },
@@ -233,7 +245,7 @@ class WorkTable extends PureComponent {
                   />
                   </div>
                   <div style={{flex:1}}>
-                  <span>凸点高度</span>
+                  <span>凸点高度（center一半）</span>
                   <InputNumber
                     min={0.5}
                     max={1.5}
@@ -273,8 +285,8 @@ class WorkTable extends PureComponent {
                   <div style={{flex:1}}>
                   <span>音桶内径</span>
                   <InputNumber
-                    min={6.3}
-                    max={5.7}
+                    min={5.0}
+                    max={6.7}
                     step={0.1}
                     defaultValue={DEFAULT_INNER_RADIUS}
                     onChange={(v) => {
