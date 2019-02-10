@@ -36,7 +36,9 @@ class ProductTable extends PureComponent {
   };
 
   handleUpdate = (values) => {
-    console.log('on ok value', values);
+    console.log('====---=-=-=-=--', values)
+    // values.previewPic = (values.previewPic && values.previewPic.length > 0) ? values.previewPic[0].response.data : ''
+    values.previewVideo = ''
     if (this.props.handleUpdate) {
       this.props.handleUpdate(values);
     }

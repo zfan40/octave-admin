@@ -21,6 +21,10 @@ class WorkModal extends Component {
     const { onOk } = this.props;
     this.props.form.validateFields((err, values) => {
       if (!err) {
+        values.url = (values.url && values.url.length > 0) ? values.url[0].response.data : ''
+        values.content = '暂无描述'
+        values.cover = '暂无描述'
+        values.status = 0
         onOk(values);
         this.handleCancel();
       }
@@ -59,7 +63,7 @@ class WorkModal extends Component {
       labelCol: { span: 6 },
       wrapperCol: { span: 14 },
     };
-    const { userId } = this.props.record;
+    const { userId, title, url } = this.props.record;
     return (
       <span>
         <span onClick={this.showModal}>{children}</span>
@@ -75,7 +79,11 @@ class WorkModal extends Component {
                 initialValue: userId,
               })(<Input />)}
             </FormItem>
-
+            <FormItem {...formItemLayout} label="作品名称">
+              {getFieldDecorator('title', {
+                initialValue: title,
+              })(<Input />)}
+            </FormItem>
             <FormItem {...formItemLayout} label="Upload" extra="midi文件">
               {getFieldDecorator('url', {
                 valuePropName: 'fileList',
@@ -84,7 +92,7 @@ class WorkModal extends Component {
                 <Upload
                   name="logo"
                   action="//api.octave-love.com/api/v1/picture/uploadPic"
-                  listType="midi"
+                  listType="text"
                   name="files"
                   beforeUpload={this.beforeUpload}
                 >

@@ -7,13 +7,13 @@ import { buildModel, preview } from '../../utils/magic';
 import OrderModal from '../../components/Editor/OrderModal';
 
 const statusMap = ['default', 'default', 'processing', 'success', 'error'];
-const DEFAULT_DOT_WIDTH = 0.3;
+const DEFAULT_DOT_WIDTH = 0.6;
 const DEFAULT_DOT_HEIGHT = 1;
 const DEFAULT_RATIO = 0.98;
 const DEFAULT_OFFSET = 2.2; // 1.95 is center
-const DEFAULT_OUTER_RADIUS = 6.6;
-const DEFAULT_INNER_RADIUS = 5.9;
-const DEFAULT_ANGLE = 30;
+const DEFAULT_OUTER_RADIUS = 6.5;
+const DEFAULT_INNER_RADIUS = 5.85;
+const DEFAULT_ANGLE = 0;
 class OrderTable extends PureComponent {
   state = {
     selectedRowKeys: [],

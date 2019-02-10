@@ -105,6 +105,19 @@ export default class TableList extends PureComponent {
   }
   handleCreateWork = res => {
     console.log(res)
+    const { dispatch } = this.props;
+    dispatch({
+      type: 'work/add',
+      payload: res,
+    }).then(() => {
+      dispatch({
+        type: 'work/fetch',
+        payload: {
+          currentPage: 1,
+          pageSize: this.pageSize,
+        },
+      })
+    });
   }
   handleSelectRows = (rows) => {
     this.setState({
@@ -131,7 +144,7 @@ export default class TableList extends PureComponent {
     dispatch({
       type: 'work/update',
       payload: workInfo,
-    }).then(()=>{
+    }).then(() => {
       dispatch({
         type: 'work/fetch',
         payload: {
@@ -320,7 +333,7 @@ export default class TableList extends PureComponent {
             />
           </div>
         </Card>
-        
+
       </PageHeaderLayout>
     );
   }

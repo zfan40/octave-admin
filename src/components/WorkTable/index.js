@@ -5,13 +5,13 @@ import styles from './index.less';
 import { buildModel, preview, buildModelWithParam } from '../../utils/magic';
 import WorkModal from '../Editor/CreateWorkModal';
 // const statusMap = ['default', 'processing', 'success', 'error'];
-const DEFAULT_DOT_WIDTH = 0.3;
+const DEFAULT_DOT_WIDTH = 0.6;
 const DEFAULT_DOT_HEIGHT = 1;
 const DEFAULT_RATIO = 0.98;
 const DEFAULT_OFFSET = 2.2; // 1.95 is center
-const DEFAULT_OUTER_RADIUS = 6.6;
-const DEFAULT_INNER_RADIUS = 5.9;
-const DEFAULT_ANGLE = 30;
+const DEFAULT_OUTER_RADIUS = 6.5;
+const DEFAULT_INNER_RADIUS = 5.85;
+const DEFAULT_ANGLE = 0;
 class WorkTable extends PureComponent {
   state = {
     selectedRowKeys: [],
@@ -79,6 +79,7 @@ class WorkTable extends PureComponent {
         return;
       }
       const mergeNotes = midi.tracks.reduce((a, b) => a.concat(b.notes), []);
+      console.warn(JSON.stringify(mergeNotes))
       buildModelWithParam(
         mergeNotes,
         id,
@@ -137,11 +138,12 @@ class WorkTable extends PureComponent {
         break;
     }
   };
-  handleUpdate(workInfo,data) {
+  handleUpdate(workInfo, data) {
     console.log(workInfo)
-    console.log('new data',data)
-    workInfo.url = data.url[0].response.data// //img.musixise.com/itB012vg_castle.mid
-    const {onEditWork} = this.props
+    console.log('new data', data)
+    workInfo.url = data.url || workInfo.url// //img.musixise.com/itB012vg_castle.mid
+    workInfo.title = data.title || workInfo.title
+    const { onEditWork } = this.props
     onEditWork(workInfo)
   }
   render() {
@@ -232,79 +234,79 @@ class WorkTable extends PureComponent {
             message={
               <div>
                 <div style={{ display: 'flex' }}>
-                <div style={{flex:1}}>
-                  <span>凸点宽度</span>
-                  <InputNumber
-                    min={0.2}
-                    max={0.8}
-                    step={0.1}
-                    defaultValue={DEFAULT_DOT_WIDTH}
-                    onChange={(v) => {
-                      this.onChangeInput('dot_width', v);
-                    }}
-                  />
+                  <div style={{ flex: 1 }}>
+                    <span>凸点宽度</span>
+                    <InputNumber
+                      min={0.2}
+                      max={0.8}
+                      step={0.1}
+                      defaultValue={DEFAULT_DOT_WIDTH}
+                      onChange={(v) => {
+                        this.onChangeInput('dot_width', v);
+                      }}
+                    />
                   </div>
-                  <div style={{flex:1}}>
-                  <span>凸点高度（center一半）</span>
-                  <InputNumber
-                    min={0.5}
-                    max={1.5}
-                    step={0.1}
-                    defaultValue={DEFAULT_DOT_HEIGHT}
-                    onChange={(v) => {
-                      this.onChangeInput('dot_height', v);
-                    }}
-                  />
+                  <div style={{ flex: 1 }}>
+                    <span>凸点高度（center一半）</span>
+                    <InputNumber
+                      min={0.5}
+                      max={1.5}
+                      step={0.1}
+                      defaultValue={DEFAULT_DOT_HEIGHT}
+                      onChange={(v) => {
+                        this.onChangeInput('dot_height', v);
+                      }}
+                    />
                   </div>
-                  <div style={{flex:1}}>
-                  <span>凸点位移</span>
-                  <InputNumber
-                    min={2.0}
-                    max={2.4}
-                    step={0.1}
-                    defaultValue={DEFAULT_OFFSET}
-                    onChange={(v) => {
-                      this.onChangeInput('offset', v);
-                    }}
-                  />
+                  <div style={{ flex: 1 }}>
+                    <span>凸点位移</span>
+                    <InputNumber
+                      min={2.0}
+                      max={2.4}
+                      step={0.1}
+                      defaultValue={DEFAULT_OFFSET}
+                      onChange={(v) => {
+                        this.onChangeInput('offset', v);
+                      }}
+                    />
                   </div>
                 </div>
-                <div style={{ display: 'flex',marginTop:'6px' }}>
-                <div style={{flex:1}}>
-                  <span>音桶外径</span>
-                  <InputNumber
-                    min={6.4}
-                    max={6.8}
-                    step={0.1}
-                    defaultValue={DEFAULT_OUTER_RADIUS}
-                    onChange={(v) => {
-                      this.onChangeInput('outer_radius', v);
-                    }}
-                  />
+                <div style={{ display: 'flex', marginTop: '6px' }}>
+                  <div style={{ flex: 1 }}>
+                    <span>音桶外径</span>
+                    <InputNumber
+                      min={6.4}
+                      max={6.8}
+                      step={0.1}
+                      defaultValue={DEFAULT_OUTER_RADIUS}
+                      onChange={(v) => {
+                        this.onChangeInput('outer_radius', v);
+                      }}
+                    />
                   </div>
-                  <div style={{flex:1}}>
-                  <span>音桶内径</span>
-                  <InputNumber
-                    min={5.0}
-                    max={6.7}
-                    step={0.1}
-                    defaultValue={DEFAULT_INNER_RADIUS}
-                    onChange={(v) => {
-                      this.onChangeInput('inner_radius', v);
-                    }}
-                  />
+                  <div style={{ flex: 1 }}>
+                    <span>音桶内径</span>
+                    <InputNumber
+                      min={5.0}
+                      max={6.7}
+                      step={0.1}
+                      defaultValue={DEFAULT_INNER_RADIUS}
+                      onChange={(v) => {
+                        this.onChangeInput('inner_radius', v);
+                      }}
+                    />
                   </div>
-                  <div style={{flex:1}}>
-                  <span>凸点角度</span>
-                  <InputNumber
-                    min={0}
-                    max={45}
-                    step={1}
-                    defaultValue={DEFAULT_ANGLE}
-                    onChange={(v) => {
-                      this.onChangeInput('angle', v);
-                    }}
-                  />
+                  <div style={{ flex: 1 }}>
+                    <span>凸点角度</span>
+                    <InputNumber
+                      min={0}
+                      max={45}
+                      step={1}
+                      defaultValue={DEFAULT_ANGLE}
+                      onChange={(v) => {
+                        this.onChangeInput('angle', v);
+                      }}
+                    />
                   </div>
                 </div>
               </div>

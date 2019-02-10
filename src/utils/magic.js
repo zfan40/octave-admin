@@ -5,7 +5,8 @@ const jscad = require('@jscad/openjscad');
 // const fs = require('fs');
 const FileSaver = require('file-saver');
 
-const SAME_NOTE_INTERVAL = 1.2; // 同一个音不能相距小于1秒，不然音片打击出问题 20*2.3/39.2 = 1.2
+// 音高范围 #G -> #G
+const SAME_NOTE_INTERVAL = 1.2; // 同一个音不能相距小于1秒，不然音片打击出问题 20*2.3/39.2 = 1.2 (2.3是经验长度，39.2是全长)
 
 // const mbox = new Tone.MonoSynth({
 //   volume: -10,
@@ -152,7 +153,7 @@ export function buildModel(items, workId) {
     return;
   }
   // then we focus on each task
-  const {groups,machines,taskTimeArrays} = _getGroupsAndMachines(items)
+  const { groups, machines, taskTimeArrays } = _getGroupsAndMachines(items)
   if (!groups || !machines) return false
   console.log(groups)
   if (machines.length < 18) {
@@ -296,7 +297,7 @@ function _getGroupsAndMachines(items) {
       count += 1;
     }
   });
-  return {groups,machines,taskTimeArrays}
+  return { groups, machines, taskTimeArrays }
 }
 export function buildModelWithParam(
   items,
@@ -309,7 +310,8 @@ export function buildModelWithParam(
   ANGLE
 ) {
   console.log('== Enter RealMagic ==');
-  const {groups,machines,taskTimeArrays} = _getGroupsAndMachines(items)
+  const { groups, machines, taskTimeArrays } = _getGroupsAndMachines(items)
+  console.warn('算法返回:', groups, machines, taskTimeArrays)
   if (!groups || !machines) return false
   if (machines.length < 18) {
     while (machines.length < 18) {
@@ -323,8 +325,8 @@ export function buildModelWithParam(
     title: `No.${workId}: `,
     content: JSON.stringify(machines),
   });
-  
-  const newGroups =  groups.map(group=>group.map((item,index)=>index%Math.max(...group)+1)) //避免潜在的风险，重新赋值，比如[1，1，1，2] 弄成 [1，2，1，2]
+
+  const newGroups = groups.map(group => group.map((item, index) => index % Math.max(...group) + 1)) //避免潜在的风险，重新赋值，比如[1，1，1，2] 弄成 [1，2，1，2]
   const finalBins = newGroups.reduce((a, b) => a.concat(b.map(item => item + Math.max(...a))));
   let finalTimings = taskTimeArrays.reduce((a, b) => a.concat(b)); // just flatten it
   finalTimings = finalTimings.map(item => item * 15 / 20); // normalize from 20s to 15s
@@ -333,9 +335,9 @@ export function buildModelWithParam(
   console.log(finalTimings)
   //[8.289474375000001, 6.394737375000001, 4.500000375000001, 2.6052633750000003, 9.236842874999999, 0.710526375, 4.973684625000001, 10.184211375, 13.736843249999998, 3.5526318750000003, 7.342105875, 1.184210625, 5.447368875, 10.657895624999998, 13.855264312499997, 12.078948374999998, 1.6578948749999998, 4.026316125, 7.815790125000001, 11.131579874999998, 13.026316874999997, 13.973685374999999, 8.289474375000001, 5.210526750000001, 6.394737375000001, 13.500001124999997, 0.236842125, 4.500000375000001, 5.447368875, 12.552632625, 12.789474749999998, 14.032895906249996, 0.47368425, 1.4210527499999999, 2.6052633750000003, 9.00000075, 12.315790499999999, 13.026316874999997, 0.710526375, 1.6578948749999998, 5.921053125000001, 8.763158624999999, 9.710527124999999, 10.894737749999999, 12.078948374999998, 10.184211375, 2.131579125, 10.657895624999998]
   const factoryExcel = {}
-  finalBins.forEach((bin,index)=>{
+  finalBins.forEach((bin, index) => {
     if (!factoryExcel[bin]) factoryExcel[bin] = []
-    factoryExcel[bin].push(finalTimings[index]*38/15) //乘下系数 39.2是音桶铺开长度，用38；15是音乐时间
+    factoryExcel[bin].push(finalTimings[index] * 38 / 15) //乘下系数 39.2是音桶铺开长度，用38；15是音乐时间
   })
   console.log(factoryExcel)
   const musicboxPins = finalBins.map((bin, index) => `generatePin(${finalTimings[index]},${bin})`);
@@ -390,31 +392,35 @@ export function preview(items) {
   //   Tone.Transport.stop(0);
   // }
   // midi version
+  console.log(items)
   console.log('current state', Tone.Transport.state);
   if (Tone.Transport.state === 'stopped') {
     if (music) music.dispose();
+    console.log('1')
     music = new Tone.Part((time, value) => {
-      mbox.triggerAttackRelease(value.name, '4n', time);
+      console.log(value)
+      mbox.triggerAttackRelease(Tone.Frequency(value.midi, "midi").toNote(), '4n', time);
     }, items).start(0, 0);
     music.loop = true;
-    const lastNote = items[items.length-1]
-    if (lastNote.time>=20) {
-      music.loopEnd = lastNote.time + lastNote.duration + 2
+    const lastNote = items[items.length - 1]
+    if (lastNote.time >= 20) {
+      music.loopEnd = lastNote.time + lastNote.duration + 1
     } else {
       music.loopEnd = 21; // 20s的作品，多一秒喘息
     }
-    message.info(`全曲时常${Tone.Time(music.loopEnd).toSeconds()-2}`);
+    message.info(`全曲时常${Tone.Time(music.loopEnd).toSeconds() - 1}`);
     Tone.Transport.start('+0.01', 0);
   } else {
+    console.log(2)
     Tone.Transport.stop(0);
   }
 }
 
 export function canMakePaper30(items) {
-  const paper30Notes = [48,50,55,57,59,60,62,64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,86,88]
-  return items.every(item=>paper30Notes.indexOf(item)>=0)
+  const paper30Notes = [48, 50, 55, 57, 59, 60, 62, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 86, 88]
+  return items.every(item => paper30Notes.indexOf(item) >= 0)
 }
 export function canMakePaper15(items) {
-  const paper15Notes = [48,50,52,53,55,57,59,60,62,64,65,67,69,71,72]
-  return items.every(item=>paper15Notes.indexOf(item)>=0)
+  const paper15Notes = [48, 50, 52, 53, 55, 57, 59, 60, 62, 64, 65, 67, 69, 71, 72]
+  return items.every(item => paper15Notes.indexOf(item) >= 0)
 }

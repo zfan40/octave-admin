@@ -131,7 +131,7 @@ export async function queryNotices() {
 export async function queryWork(params) {
   return request(
     `https://api.octave-love.com/api/v1/admin/works?page=${params.currentPage}&size=${
-      params.pageSize
+    params.pageSize
     }`,
     {
       headers,
@@ -157,12 +157,10 @@ export async function updateWork(params) {
   });
 }
 export async function addWork(params) {
-  return request('/api/rule', {
+  return request('https://api.octave-love.com/api/v1/admin/works', {
     method: 'POST',
-    body: {
-      ...tokenObj,
-      ...params,
-    },
+    headers,
+    body: params,
   });
 }
 
@@ -175,7 +173,7 @@ export async function getMusixiserById(params) {
 export async function queryMusixiser(params) {
   return request(
     `https://api.octave-love.com/api/v1/admin/musixisers?page=${params.currentPage}&size=${
-      params.pageSize
+    params.pageSize
     }`,
     {
       headers,
@@ -224,7 +222,7 @@ export async function addProduct(params) {
   return request(`https://api.octave-love.com/api/v1/admin/shop/products`, {
     method: 'POST',
     headers,
-    body:params
+    body: params
 
   });
 }
@@ -233,16 +231,16 @@ export async function updateProduct(params) {
   return request(`https://api.octave-love.com/api/v1/admin/shop/products`, {
     method: 'PUT',
     headers,
-    body:params
+    body: params
 
   });
 }
 
 export async function queryProduct(params) {
   console.log("queryProduct", params)
-  return request( `https://api.octave-love.com/api/v1/admin/shop/products?a=1&page=${params.currentPage}&size=${params.pageSize}`, {
-      headers,
-    }
+  return request(`https://api.octave-love.com/api/v1/admin/shop/products?a=1&page=${params.currentPage}&size=${params.pageSize}`, {
+    headers,
+  }
   );
 }
 
@@ -260,9 +258,9 @@ export async function removeProduct(params) {
 
 export async function queryOrders(params) {
   console.log("queryOrders", params)
-  return request( `https://api.octave-love.com/api/v1/admin/shop/orders?a=1&page=${params.currentPage}&size=${params.pageSize}`, {
-      headers,
-    }
+  return request(`https://api.octave-love.com/api/v1/admin/shop/orders?a=1&page=${params.currentPage}&size=${params.pageSize}`, {
+    headers,
+  }
   );
 }
 
@@ -270,7 +268,7 @@ export async function updateOrders(params) {
   return request(`https://api.octave-love.com/api/v1/admin/shop/orders`, {
     method: 'PUT',
     headers,
-    body:params
+    body: params
 
   });
 }

@@ -13,6 +13,7 @@ export default {
   effects: {
     *fetch({ payload }, { call, put }) {
       const response = yield call(queryWork, payload);
+      if (!response.data) return
       for (let i = 0; i <= response.data.list.length - 1; i++) {
         const userVORes = yield call(getMusixiserById, {
           id: response.data.list[i].userId,

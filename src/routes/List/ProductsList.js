@@ -12,7 +12,7 @@ const { Option } = Select;
 const getValue = obj => Object.keys(obj).map(key => obj[key]).join(',');
 
 //初始化
-const insertrecord = {id:0, name:'', intro:'', price:'0.00', category:0}
+const insertrecord = { id: 0, name: '', intro: '', price: '0.00', category: 0 }
 
 @connect(({ products, loading }) => ({
   products,
@@ -118,6 +118,7 @@ export default class ProductsList extends PureComponent {
 
   addProduct = (value) => {
     console.log("add product", value)
+    // value.previewPic = data.previewPic[0].response.data //already processed
     const { dispatch } = this.props;
     dispatch({
       type: 'products/add',
@@ -136,6 +137,7 @@ export default class ProductsList extends PureComponent {
   handleUpdate = (value) => {
     console.log('updating with', value);
     const { dispatch } = this.props;
+    // value.previewPic = value.previewPic[0].response.data // already processed
     dispatch({
       type: 'products/update',
       payload: value,
@@ -320,7 +322,7 @@ export default class ProductsList extends PureComponent {
               {this.renderForm()}
             </div>
             <div>
-              <ProductModal record={insertrecord}  onOk={update => this.addProduct(update)}>
+              <ProductModal record={insertrecord} onOk={data => this.addProduct(data)}>
                 <Button type="primary">新产品</Button>
               </ProductModal>
             </div>
