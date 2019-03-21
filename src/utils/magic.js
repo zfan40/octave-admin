@@ -6,7 +6,7 @@ const jscad = require('@jscad/openjscad');
 const FileSaver = require('file-saver');
 
 // 音高范围 #G -> #G
-const SAME_NOTE_INTERVAL = 1.2; // 同一个音不能相距小于1秒，不然音片打击出问题 20*2.3/39.2 = 1.2 (2.3是经验长度，39.2是全长)
+const SAME_NOTE_INTERVAL = 1.2; // 同一个音不能相距小于1.2秒，不然音片打击出问题 20*2.3/39.2 = 1.2 (2.3是经验长度，39.2是全长)
 
 // const mbox = new Tone.MonoSynth({
 //   volume: -10,
@@ -30,11 +30,11 @@ const mbox = new Tone.Sampler(
     E4: 'E4.[mp3|ogg]',
     G4: 'G4.[mp3|ogg]',
     B4: 'B4.[mp3|ogg]',
-    'C#5': 'Cs5.[mp3|ogg]',
-    E5: 'E5.[mp3|ogg]',
-    G5: 'G5.[mp3|ogg]',
-    B5: 'B5.[mp3|ogg]',
-    'C#6': 'Cs6.[mp3|ogg]',
+    // 'C#5': 'Cs5.[mp3|ogg]',
+    // E5: 'E5.[mp3|ogg]',
+    // G5: 'G5.[mp3|ogg]',
+    // B5: 'B5.[mp3|ogg]',
+    // 'C#6': 'Cs6.[mp3|ogg]',
   },
   {
     release: 1,
@@ -237,6 +237,9 @@ export function buildModel(items, workId) {
   });
 }
 function _getGroupsAndMachines(items) {
+  // items is like :
+  // [{midi: 88, time: 0, duration: 1, velocity: 1}
+  // {midi: 87, time: 0.31354166666666666, duration: 1, velocity: 1}]
   const tasksObj = {};
   items.forEach((item) => {
     // const itemNoteFreq = parseInt(Tone.Frequency(item.note).toFrequency() * 2, 10); //txt version
@@ -254,6 +257,9 @@ function _getGroupsAndMachines(items) {
     alert('音种类超过18个，这个做不了');
     return false;
   }
+  console.log('midi notes:', JSON.stringify(items))
+  console.log('task types:', JSON.stringify(taskTypes))
+  console.log('taskTimeArrays:', JSON.stringify(taskTimeArrays))
   taskTimeArrays.forEach((timeArray) => {
     const final = [];
     timeArray.forEach((time, j) => {
@@ -399,14 +405,16 @@ export function preview(items) {
     console.log('1')
     music = new Tone.Part((time, value) => {
       console.log(value)
-      mbox.triggerAttackRelease(Tone.Frequency(value.midi, "midi").toNote(), '4n', time);
+      mbox.triggerAttackRelease(Tone.Frequency(value.midi, "midi").toNote(), '8n', time);
     }, items).start(0, 0);
     music.loop = true;
     const lastNote = items[items.length - 1]
-    if (lastNote.time >= 20) {
+    if (lastNote.time > 20) {
+      console.log('长于20s曲子')
       music.loopEnd = lastNote.time + lastNote.duration + 1
     } else {
-      music.loopEnd = 21; // 20s的作品，多一秒喘息
+      console.log('正常20s曲子')
+      music.loopEnd = 20.6; // 20s的作品，多.6秒喘息
     }
     message.info(`全曲时常${Tone.Time(music.loopEnd).toSeconds() - 1}`);
     Tone.Transport.start('+0.01', 0);
