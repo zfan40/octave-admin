@@ -193,6 +193,10 @@ class WorkTable extends PureComponent {
         ),
       },
       {
+        title: '音片个数',
+        dataIndex: 'machineNum',
+      },
+      {
         title: '操作',
         dataIndex: 'url',
         render: (a, b) => (

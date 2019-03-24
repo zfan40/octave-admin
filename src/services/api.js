@@ -157,10 +157,10 @@ export async function updateWork(params) {
   });
 }
 export async function addWork(params) {
-  return request('https://api.octave-love.com/api/v1/admin/works', {
+  return request(`https://api.octave-love.com/api/v1/admin/works?${stringify(params)}`, {
     method: 'POST',
     headers,
-    body: params,
+    body: {},
   });
 }
 

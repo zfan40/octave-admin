@@ -28,7 +28,6 @@ class MusixiserModal extends Component {
         this.handleCancel();
       }
     });
-
   }
 
   handleCancel = (e) => {
