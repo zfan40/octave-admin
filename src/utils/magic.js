@@ -250,17 +250,18 @@ function _getGroupsAndMachines(items) {
     tasksObj[itemNoteFreq].push(item.time);
   });
   const taskTypes = Object.keys(tasksObj); // [659,784,...]  freq array, 排好序的（object.keys）
-  const taskTimeArrays = Object.values(tasksObj); // [[2.66]，[1.0295,1.39,2.6713]] 顺序跟上面对应的
+  const taskTimeArrays = Object.values(tasksObj); // [[2.66],[1.0295,1.39,2.6713]] 顺序跟上面对应的
+  const taskTimeArraysCycle = taskTimeArrays.map(a => a.map(b => [b, b + 20]).flat().sort((a, b) => a - b)) //考虑首位交接[[2.66,22.66],[1.0295,1.39,2.6713,21.0295,21.39,22.6713]]
   const machines = []; // init with existing types, will add more machines
-  const groups = []; // will final be [[1],[1,2,1],...], corespond to taskTimeArrays
+  let groups = []; // will final be [1,2,...], corespond to taskTimeArrays 各需要多少个音片
   if (taskTypes.length > 18) {
     alert('音种类超过18个，这个做不了');
     return false;
   }
   console.log('midi notes:', JSON.stringify(items))
   console.log('task types:', JSON.stringify(taskTypes))
-  console.log('taskTimeArrays:', JSON.stringify(taskTimeArrays))
-  taskTimeArrays.forEach((timeArray) => {
+  console.log('taskTimeArrays:', JSON.stringify(taskTimeArraysCycle))
+  taskTimeArraysCycle.forEach((timeArray) => {
     const final = [];
     timeArray.forEach((time, j) => {
       const test = []; // 校验当前final里不能用的序号， final里序号种类和test种类相同则证明不行
@@ -296,6 +297,7 @@ function _getGroupsAndMachines(items) {
     });
     groups.push(final);
   });
+  console.log(groups)
   groups.forEach((group, index) => {
     let count = 0;
     while (count <= Math.max(...group) - 1) {
@@ -303,6 +305,7 @@ function _getGroupsAndMachines(items) {
       count += 1;
     }
   });
+  groups = groups.map(group => Math.max(...group))
   return { groups, machines, taskTimeArrays }
 }
 export function buildModelWithParam(
@@ -317,6 +320,7 @@ export function buildModelWithParam(
 ) {
   console.log('== Enter RealMagic ==');
   const { groups, machines, taskTimeArrays } = _getGroupsAndMachines(items)
+
   console.warn('算法返回:', groups, machines, taskTimeArrays)
   if (!groups || !machines) return false
   if (machines.length < 18) {
@@ -332,10 +336,11 @@ export function buildModelWithParam(
     content: JSON.stringify(machines),
   });
 
-  const newGroups = groups.map(group => group.map((item, index) => index % Math.max(...group) + 1)) //避免潜在的风险，重新赋值，比如[1，1，1，2] 弄成 [1，2，1，2]
+  const newGroups = taskTimeArrays.map((taskArray, index) => taskArray.map((item, itemIndex) => itemIndex % groups[index] + 1)) //避免潜在的风险，重新赋值，[2.353125, 4.7375, 16.741666666666667, 19.09791666666667],如果group是2 就对应成[1，2，1，2]，如果group是1，对应成[1,1,1,1]
   const finalBins = newGroups.reduce((a, b) => a.concat(b.map(item => item + Math.max(...a))));
   let finalTimings = taskTimeArrays.reduce((a, b) => a.concat(b)); // just flatten it
   finalTimings = finalTimings.map(item => item * 15 / 20); // normalize from 20s to 15s
+  console.log(newGroups)
   console.log(finalBins)
   //[1, 2, 3, 4, 4, 5, 5, 5, 5, 6, 6, 7, 7, 7, 7, 8, 9, 9, 9, 9, 9, 9, 10, 11, 11, 12, 13, 13, 13, 13, 14, 14, 15, 15, 15, 15, 15, 15, 16, 16, 16, 16, 16, 16, 16, 17, 18, 18]
   console.log(finalTimings)
@@ -343,7 +348,7 @@ export function buildModelWithParam(
   const factoryExcel = {}
   finalBins.forEach((bin, index) => {
     if (!factoryExcel[bin]) factoryExcel[bin] = []
-    factoryExcel[bin].push(finalTimings[index] * 38 / 15) //乘下系数 39.2是音桶铺开长度，用38；15是音乐时间
+    factoryExcel[bin].push(finalTimings[index] * 38.5 / 15) //乘下系数 39.2是音桶铺开长度，用38.5；15是音乐时间
   })
   console.log(factoryExcel)
   const musicboxPins = finalBins.map((bin, index) => `generatePin(${finalTimings[index]},${bin})`);
@@ -414,7 +419,7 @@ export function preview(items) {
       music.loopEnd = lastNote.time + lastNote.duration + 1
     } else {
       console.log('正常20s曲子')
-      music.loopEnd = 20.6; // 20s的作品，多.6秒喘息
+      music.loopEnd = 20;
     }
     message.info(`全曲时常${Tone.Time(music.loopEnd).toSeconds() - 1}`);
     Tone.Transport.start('+0.01', 0);
