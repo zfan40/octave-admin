@@ -3,7 +3,7 @@ import React, { PureComponent, Fragment } from 'react';
 import { Table, Alert, Divider, Popconfirm, Badge, InputNumber } from 'antd';
 import { Link, Redirect, Switch, Route } from 'dva/router';
 import styles from './index.less';
-import { buildModel, preview } from '../../utils/magic';
+import { buildModelWithParam, preview } from '../../utils/magic';
 import OrderModal from '../../components/Editor/OrderModal';
 
 const statusMap = ['default', 'default', 'processing', 'success', 'error'];
@@ -228,12 +228,12 @@ class OrderTable extends PureComponent {
       // },
       {
         title: '操作',
-        dataIndex: 'url',
-        render: (text, record) => (
+        dataIndex: 'product',
+        render: (product, record) => (
           <Fragment>
-            <a onClick={() => this.previewFromWorkUrl(text)}>试听</a>
+            <a onClick={() => this.previewFromWorkUrl(product.url)}>试听</a>
             <Divider type="vertical" />
-            <a onClick={() => this.buildModelFromWorkUrl(text, record.id)}>生产模型</a>
+            <a onClick={() => this.buildModelFromWorkUrl(product.url, record.id)}>生产模型</a>
             <Divider type="vertical" />
             <Link to={`/list/order-profile/${record.id}`}>查看</Link>
             <Divider type="vertical" />

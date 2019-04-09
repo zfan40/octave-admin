@@ -129,12 +129,6 @@ function aoaToSheet(machines, factoryExcel) {
 export function buildFactoryExcel(
   items,
   workId,
-  DOT_WIDTH,
-  OFFSET,
-  OUTER_RADIUS,
-  INNER_RADIUS,
-  DOT_HEIGHT,
-  ANGLE
 ) {
   const { groups, machines, taskTimeArrays } = _getGroupsAndMachines(items);
   if (!groups || !machines) return false
@@ -149,7 +143,7 @@ export function buildFactoryExcel(
 
   console.log('这个是生成excel需要的频率', JSON.stringify(machines))
   // aoaToSheet();
-  const newGroups = groups.map(group => group.map((item, index) => index % Math.max(...group) + 1)) //避免潜在的风险，重新赋值，比如[1，1，1，2] 弄成 [1，2，1，2]
+  const newGroups = taskTimeArrays.map((taskArray, index) => taskArray.map((item, itemIndex) => itemIndex % groups[index] + 1)) //避免潜在的风险，重新赋值，[2.353125, 4.7375, 16.741666666666667, 19.09791666666667],如果group是2 就对应成[1，2，1，2]，如果group是1，对应成[1,1,1,1]
   const finalBins = newGroups.reduce((a, b) => a.concat(b.map(item => item + Math.max(...a))));
   let finalTimings = taskTimeArrays.reduce((a, b) => a.concat(b)); // just flatten it
 
@@ -161,7 +155,7 @@ export function buildFactoryExcel(
   const factoryExcel = {}
   finalBins.forEach((bin, index) => {
     if (!factoryExcel[bin]) factoryExcel[bin] = []
-    factoryExcel[bin].push(finalTimings[index] * 38 / 15) //乘下系数 39.2是音桶铺开长度，用38；15是音乐时间
+    factoryExcel[bin].push(finalTimings[index] * 39.2 / 15) //乘下系数 39.2是音桶铺开长度，用38；15是音乐时间
   })
   console.log('这个是频率的时间', factoryExcel)
   aoaToSheet(machines, factoryExcel)
