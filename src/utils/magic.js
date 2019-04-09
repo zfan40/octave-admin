@@ -102,8 +102,69 @@ function getEasyPins(tasksObj) {
   });
   return musicboxPins;
 }
-export function buildFactoryExcel() {
+function aoaToSheet(machines, factoryExcel) {
+  const sheetName = 'sheet1';
+  const workbook = {
+    SheetNames: [sheetName],
+    Sheets: {},
+  };
+  workbook.Sheets[sheetName] = sheet;
+  // 生成excel的配置项
+  var wopts = {
+    bookType: 'xlsx', // 要生成的文件类型
+    bookSST: false, // 是否生成Shared String Table，官方解释是，如果开启生成速度会下降，但在低版本IOS设备上有更好的兼容性
+    type: 'binary'
+  };
+  var wbout = XLSX.write(workbook, wopts);
+  var blob = new Blob([s2ab(wbout)], { type: "application/octet-stream" });
+  // 字符串转ArrayBuffer
+  function s2ab(s) {
+    var buf = new ArrayBuffer(s.length);
+    var view = new Uint8Array(buf);
+    for (var i = 0; i != s.length; ++i) view[i] = s.charCodeAt(i) & 0xFF;
+    return buf;
+  }
+  return blob;
+}
+export function buildFactoryExcel(
+  items,
+  workId,
+  DOT_WIDTH,
+  OFFSET,
+  OUTER_RADIUS,
+  INNER_RADIUS,
+  DOT_HEIGHT,
+  ANGLE
+) {
+  const { groups, machines, taskTimeArrays } = _getGroupsAndMachines(items);
+  if (!groups || !machines) return false
+  if (machines.length < 18) {
+    while (machines.length < 18) {
+      machines.push(0);
+    }
+  } else if (machines.length > 18) {
+    alert(`所需音片儿超过18个(${machines.length})`);
+    return false;
+  }
 
+  console.log('这个是生成excel需要的频率', JSON.stringify(machines))
+  // aoaToSheet();
+  const newGroups = groups.map(group => group.map((item, index) => index % Math.max(...group) + 1)) //避免潜在的风险，重新赋值，比如[1，1，1，2] 弄成 [1，2，1，2]
+  const finalBins = newGroups.reduce((a, b) => a.concat(b.map(item => item + Math.max(...a))));
+  let finalTimings = taskTimeArrays.reduce((a, b) => a.concat(b)); // just flatten it
+
+  finalTimings = finalTimings.map(item => item * 15 / 20); // normalize from 20s to 15s
+  console.log(finalBins)
+  //[1, 2, 3, 4, 4, 5, 5, 5, 5, 6, 6, 7, 7, 7, 7, 8, 9, 9, 9, 9, 9, 9, 10, 11, 11, 12, 13, 13, 13, 13, 14, 14, 15, 15, 15, 15, 15, 15, 16, 16, 16, 16, 16, 16, 16, 17, 18, 18]
+  console.log(finalTimings)
+  //[8.289474375000001, 6.394737375000001, 4.500000375000001, 2.6052633750000003, 9.236842874999999, 0.710526375, 4.973684625000001, 10.184211375, 13.736843249999998, 3.5526318750000003, 7.342105875, 1.184210625, 5.447368875, 10.657895624999998, 13.855264312499997, 12.078948374999998, 1.6578948749999998, 4.026316125, 7.815790125000001, 11.131579874999998, 13.026316874999997, 13.973685374999999, 8.289474375000001, 5.210526750000001, 6.394737375000001, 13.500001124999997, 0.236842125, 4.500000375000001, 5.447368875, 12.552632625, 12.789474749999998, 14.032895906249996, 0.47368425, 1.4210527499999999, 2.6052633750000003, 9.00000075, 12.315790499999999, 13.026316874999997, 0.710526375, 1.6578948749999998, 5.921053125000001, 8.763158624999999, 9.710527124999999, 10.894737749999999, 12.078948374999998, 10.184211375, 2.131579125, 10.657895624999998]
+  const factoryExcel = {}
+  finalBins.forEach((bin, index) => {
+    if (!factoryExcel[bin]) factoryExcel[bin] = []
+    factoryExcel[bin].push(finalTimings[index] * 38 / 15) //乘下系数 39.2是音桶铺开长度，用38；15是音乐时间
+  })
+  console.log('这个是频率的时间', factoryExcel)
+  aoaToSheet(machines, factoryExcel)
 }
 export function buildModel(items, workId) {
   console.log('== Enter RealMagic ==');

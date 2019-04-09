@@ -2,7 +2,7 @@ import React, { PureComponent, Fragment } from 'react';
 // import moment from 'moment';
 import { Table, Alert, Divider, Popconfirm, InputNumber } from 'antd';
 import styles from './index.less';
-import { buildModel, preview, buildModelWithParam } from '../../utils/magic';
+import { buildModel, preview, buildModelWithParam, buildFactoryExcel } from '../../utils/magic';
 import WorkModal from '../Editor/CreateWorkModal';
 // const statusMap = ['default', 'processing', 'success', 'error'];
 const DEFAULT_DOT_WIDTH = 0.6;
@@ -12,6 +12,7 @@ const DEFAULT_OFFSET = 2.2; // 1.95 is center
 const DEFAULT_OUTER_RADIUS = 6.5;
 const DEFAULT_INNER_RADIUS = 5.85;
 const DEFAULT_ANGLE = 0;
+// console.log(officegen);
 class WorkTable extends PureComponent {
   state = {
     selectedRowKeys: [],
@@ -58,6 +59,26 @@ class WorkTable extends PureComponent {
       preview(mergeNotes);
     });
   };
+  buildModelFromFactoryExcel = (url, id) => {
+    MidiConvert.load(url, (midi) => {
+      if (!midi) {
+        alert('文件有误');
+        return;
+      }
+      const mergeNotes = midi.tracks.reduce((a, b) => a.concat(b.notes), []);
+      console.warn('啦啦啦啦', JSON.stringify(mergeNotes))
+      buildFactoryExcel(
+        mergeNotes,
+        id,
+        this.model_dot_width,
+        this.model_offset,
+        this.model_outer_radius,
+        this.model_inner_radius,
+        this.model_dot_height,
+        this.model_angle
+      );
+    });
+  }
   buildModelFromWorkUrl = (url, id) => {
     /* txt file */
     // const request = new XMLHttpRequest();
@@ -79,7 +100,7 @@ class WorkTable extends PureComponent {
         return;
       }
       const mergeNotes = midi.tracks.reduce((a, b) => a.concat(b.notes), []);
-      console.warn(JSON.stringify(mergeNotes))
+      console.warn('啦啦啦啦', JSON.stringify(mergeNotes))
       buildModelWithParam(
         mergeNotes,
         id,
@@ -212,6 +233,8 @@ class WorkTable extends PureComponent {
             <WorkModal record={b} onOk={res => this.handleUpdate(b, res)}>
               <a>编辑</a>
             </WorkModal>
+            <Divider type="vertical" />
+            <a onClick={() => this.buildModelFromFactoryExcel(a, b.id)}>18音excel</a>
           </Fragment>
         ),
       },
