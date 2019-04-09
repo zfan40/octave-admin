@@ -370,7 +370,11 @@ export function buildModelWithParam(
   }
 
   function main() {
-    let cylinderBody = difference(cylinder({h: 19.9,r: OUTER_RADIUS,center: true,fn:100}),cylinder({h: 19.9,r: INNER_RADIUS,center: true,fn:100}),generatePin(0, -2),generatePin(5, -2),generatePin(10, -2))
+    //let gap1 = linear_extrude({height:.8},polygon([[0,0],[9.81,1.91],[9.81,-1.91]])).translate([0,0,19.9/2-0.8])
+    //let gap2 = linear_extrude({height:.8},polygon([[0,0],[-9.81,1.91],[-9.81,-1.91]])).translate([0,0,19.9/2-0.8])
+    let gap3 = linear_extrude({height:.8},polygon([[0,0],[9.81,1.91],[9.81,-1.91]])).translate([0,0,-19.9/2])
+    let gap4 = linear_extrude({height:.8},polygon([[0,0],[-9.81,1.91],[-9.81,-1.91]])).translate([0,0,-19.9/2])
+    let cylinderBody = difference(cylinder({h: 19.9,r: OUTER_RADIUS,center: true,fn:100}),cylinder({h: 19.9,r: INNER_RADIUS,center: true,fn:100}),gap3,gap4)
     let holes = union(${musicboxPins})
     return union(cylinderBody,holes).translate([0, 0, 0]).scale(1);
   }`;
