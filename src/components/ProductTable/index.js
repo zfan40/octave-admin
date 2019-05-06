@@ -5,6 +5,7 @@ import styles from './index.less';
 import { buildModel, preview } from '../../utils/magic';
 import ProductModal from '../../components/Editor/ProductModal'
 // const statusMap = ['default', 'processing', 'success', 'error'];
+const categoryMap = { 1: '18音八音盒', 7: '纸带八音盒', 100: 'wav音频下载' }
 class ProductTable extends PureComponent {
   state = {
     selectedRowKeys: [],
@@ -102,6 +103,7 @@ class ProductTable extends PureComponent {
       {
         title: '产品分类',
         dataIndex: 'category',
+        render: val => categoryMap[val],
       },
       {
         title: '产品介绍',

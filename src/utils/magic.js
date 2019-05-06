@@ -103,28 +103,31 @@ function getEasyPins(tasksObj) {
   return musicboxPins;
 }
 function aoaToSheet(machines, factoryExcel) {
-  const sheetName = 'sheet1';
-  const workbook = {
-    SheetNames: [sheetName],
-    Sheets: {},
-  };
-  workbook.Sheets[sheetName] = sheet;
-  // 生成excel的配置项
-  var wopts = {
-    bookType: 'xlsx', // 要生成的文件类型
-    bookSST: false, // 是否生成Shared String Table，官方解释是，如果开启生成速度会下降，但在低版本IOS设备上有更好的兼容性
-    type: 'binary'
-  };
-  var wbout = XLSX.write(workbook, wopts);
-  var blob = new Blob([s2ab(wbout)], { type: "application/octet-stream" });
-  // 字符串转ArrayBuffer
-  function s2ab(s) {
-    var buf = new ArrayBuffer(s.length);
-    var view = new Uint8Array(buf);
-    for (var i = 0; i != s.length; ++i) view[i] = s.charCodeAt(i) & 0xFF;
-    return buf;
-  }
-  return blob;
+  console.log(machines)
+  console.log(factoryExcel)
+  console.log(Math.max(Object.values(factoryExcel).map(times => times.length)))//获取单音最大重复次数
+  // const sheetName = 'sheet1';
+  // const workbook = {
+  //   SheetNames: [sheetName],
+  //   Sheets: {},
+  // };
+  // workbook.Sheets[sheetName] = sheet;
+  // // 生成excel的配置项
+  // var wopts = {
+  //   bookType: 'xlsx', // 要生成的文件类型
+  //   bookSST: false, // 是否生成Shared String Table，官方解释是，如果开启生成速度会下降，但在低版本IOS设备上有更好的兼容性
+  //   type: 'binary'
+  // };
+  // var wbout = XLSX.write(workbook, wopts);
+  // var blob = new Blob([s2ab(wbout)], { type: "application/octet-stream" });
+  // // 字符串转ArrayBuffer
+  // function s2ab(s) {
+  //   var buf = new ArrayBuffer(s.length);
+  //   var view = new Uint8Array(buf);
+  //   for (var i = 0; i != s.length; ++i) view[i] = s.charCodeAt(i) & 0xFF;
+  //   return buf;
+  // }
+  // return blob;
 }
 export function buildFactoryExcel(
   items,
@@ -141,17 +144,12 @@ export function buildFactoryExcel(
     return false;
   }
 
-  console.log('这个是生成excel需要的频率', JSON.stringify(machines))
+  // console.log('这个是生成excel需要的频率', JSON.stringify(machines))
   // aoaToSheet();
   const newGroups = taskTimeArrays.map((taskArray, index) => taskArray.map((item, itemIndex) => itemIndex % groups[index] + 1)) //避免潜在的风险，重新赋值，[2.353125, 4.7375, 16.741666666666667, 19.09791666666667],如果group是2 就对应成[1，2，1，2]，如果group是1，对应成[1,1,1,1]
   const finalBins = newGroups.reduce((a, b) => a.concat(b.map(item => item + Math.max(...a))));
   let finalTimings = taskTimeArrays.reduce((a, b) => a.concat(b)); // just flatten it
-
   finalTimings = finalTimings.map(item => item * 15 / 20); // normalize from 20s to 15s
-  console.log(finalBins)
-  //[1, 2, 3, 4, 4, 5, 5, 5, 5, 6, 6, 7, 7, 7, 7, 8, 9, 9, 9, 9, 9, 9, 10, 11, 11, 12, 13, 13, 13, 13, 14, 14, 15, 15, 15, 15, 15, 15, 16, 16, 16, 16, 16, 16, 16, 17, 18, 18]
-  console.log(finalTimings)
-  //[8.289474375000001, 6.394737375000001, 4.500000375000001, 2.6052633750000003, 9.236842874999999, 0.710526375, 4.973684625000001, 10.184211375, 13.736843249999998, 3.5526318750000003, 7.342105875, 1.184210625, 5.447368875, 10.657895624999998, 13.855264312499997, 12.078948374999998, 1.6578948749999998, 4.026316125, 7.815790125000001, 11.131579874999998, 13.026316874999997, 13.973685374999999, 8.289474375000001, 5.210526750000001, 6.394737375000001, 13.500001124999997, 0.236842125, 4.500000375000001, 5.447368875, 12.552632625, 12.789474749999998, 14.032895906249996, 0.47368425, 1.4210527499999999, 2.6052633750000003, 9.00000075, 12.315790499999999, 13.026316874999997, 0.710526375, 1.6578948749999998, 5.921053125000001, 8.763158624999999, 9.710527124999999, 10.894737749999999, 12.078948374999998, 10.184211375, 2.131579125, 10.657895624999998]
   const factoryExcel = {}
   finalBins.forEach((bin, index) => {
     if (!factoryExcel[bin]) factoryExcel[bin] = []
@@ -423,7 +421,20 @@ export function buildModelWithParam(
       fn:100,
     })).translate([sin(360 * noteSec * RATIO / 15) * OUTER_RADIUS, -cos(360 * noteSec * RATIO / 15) * OUTER_RADIUS, -9.95 + OFFSET + 0.4 + (noteNo - 1) * .9])
   }
-
+  function generateLetter(letter,letterIndex) {
+    var l = vector_char(-10,0,letter);
+    var o = [];
+    l.segments.forEach(function(pl,i) {                   // pl = polyline (not closed)
+       o.push(rotate([90,180,(180+360 * letterIndex * RATIO / 15)],
+        rectangular_extrude(pl, {w: 4, h: 4,fn:40})
+        ).scale(0.1).translate([sin(360 * letterIndex * RATIO / 15) * INNER_RADIUS, -cos(360 * letterIndex * RATIO / 15) * INNER_RADIUS,-5.5]));   // extrude it to 3D
+    });
+    return union(o).scale(1)
+  }
+  function generateIdLabel(id) {
+    
+    return (''+id).split('').map((letter,index)=>generateLetter(letter,index+2))
+  }
   function main() {
     //let gap1 = linear_extrude({height:.8},polygon([[0,0],[9.81,1.91],[9.81,-1.91]])).translate([0,0,19.9/2-0.8])
     //let gap2 = linear_extrude({height:.8},polygon([[0,0],[-9.81,1.91],[-9.81,-1.91]])).translate([0,0,19.9/2-0.8])
@@ -431,7 +442,7 @@ export function buildModelWithParam(
     let gap4 = linear_extrude({height:.8},polygon([[0,0],[-9.81,1.91],[-9.81,-1.91]])).translate([0,0,-19.9/2])
     let cylinderBody = difference(cylinder({h: 19.9,r: OUTER_RADIUS,center: true,fn:100}),cylinder({h: 19.9,r: INNER_RADIUS,center: true,fn:100}),gap3,gap4)
     let holes = union(${musicboxPins})
-    return union(cylinderBody,holes).translate([0, 0, 0]).scale(1);
+    return union(cylinderBody,holes,generateIdLabel(${workId})).translate([0, 0, 0]).scale(1);
   }`;
   console.log(script);
   const params = {};

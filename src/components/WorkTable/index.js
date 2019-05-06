@@ -164,6 +164,8 @@ class WorkTable extends PureComponent {
     console.log('new data', data)
     workInfo.url = data.url || workInfo.url// //img.musixise.com/itB012vg_castle.mid
     workInfo.title = data.title || workInfo.title
+    workInfo.cover = data.cover || workInfo.cover
+    workInfo.content = data.content || workInfo.content
     const { onEditWork } = this.props
     onEditWork(workInfo)
   }

@@ -118,7 +118,14 @@ class ProductModal extends Component {
               {
                 getFieldDecorator('category', {
                   initialValue: category,
-                })(<Input />)
+                })(<Select
+                  style={{ width: 200 }}
+                  placeholder="选择产品类型"
+                >
+                  <Option value="1">18音八音盒</Option>
+                  <Option value="7">纸带八音盒</Option>
+                  <Option value="100">wav下载</Option>
+                </Select>)
               }
             </FormItem>
             <FormItem
