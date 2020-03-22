@@ -1,9 +1,9 @@
 
 import React, { Component } from 'react';
-import { Modal, Form, Input, Button, Upload, Icon } from 'antd';
+import { Modal, Form, Input, Button, Upload, Icon, Select } from 'antd';
 import { preview } from '../../utils/magic';
 const { TextArea } = Input;
-
+const { Option } = Select
 
 const FormItem = Form.Item;
 

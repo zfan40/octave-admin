@@ -15,7 +15,7 @@ export async function query() {
 }
 
 export async function queryCurrent() {
-  return request('https://api.octave-love.com/api/v1/user/getInfo', {
+  return request('//api.octave-love.com/api/v1/user/getInfo', {
     // TODO: 貌似格式不一样
     headers,
   });

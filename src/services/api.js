@@ -83,7 +83,7 @@ export async function fakeAccountLogin(params) {
   // params貌似要加一个rememberMe:true,
   alert(JSON.stringify(params));
   try {
-    const newtoken = await request('https://api.octave-love.com/api/v1/user/authenticate', {
+    const newtoken = await request('//api.octave-love.com/api/v1/user/authenticate', {
       method: 'POST',
       headers,
       body: {
@@ -97,11 +97,11 @@ export async function fakeAccountLogin(params) {
       headers.Authorization = `${newtoken.id_token}`;
       // tokenObj.access_token = newtoken.data.id_token;
       /* previous version , called /account */
-      // return request('https://api.octave-love.com/api/v1/account', {
+      // return request('//api.octave-love.com/api/v1/account', {
       //   headers,
       //   body: {},
       // });
-      return request('https://api.octave-love.com/api/v1/user/getInfo', {
+      return request('//api.octave-love.com/api/v1/user/getInfo', {
         headers,
       });
     } else {
@@ -130,7 +130,7 @@ export async function queryNotices() {
 
 export async function queryWork(params) {
   return request(
-    `https://api.octave-love.com/api/v1/admin/works?page=${params.currentPage}&size=${
+    `//api.octave-love.com/api/v1/admin/works?page=${params.currentPage}&size=${
     params.pageSize
     }`,
     {
@@ -140,7 +140,7 @@ export async function queryWork(params) {
 }
 
 export async function removeWork(params) {
-  return request(`https://api.octave-love.com/api/v1/admin/works/${params.id}`, {
+  return request(`//api.octave-love.com/api/v1/admin/works/${params.id}`, {
     method: 'DELETE',
     headers,
     body: {
@@ -150,14 +150,14 @@ export async function removeWork(params) {
   });
 }
 export async function updateWork(params) {
-  return request(`https://api.octave-love.com/api/v1/admin/works`, {
+  return request(`//api.octave-love.com/api/v1/admin/works`, {
     method: 'PUT',
     headers,
     body: params,
   });
 }
 export async function addWork(params) {
-  return request(`https://api.octave-love.com/api/v1/admin/works`, {
+  return request(`//api.octave-love.com/api/v1/admin/works`, {
     method: 'POST',
     headers,
     body: params,
@@ -165,14 +165,14 @@ export async function addWork(params) {
 }
 
 export async function getMusixiserById(params) {
-  return request(`https://api.octave-love.com/api/v1/admin/musixisers/${params.id}`, {
+  return request(`//api.octave-love.com/api/v1/admin/musixisers/${params.id}`, {
     headers,
   });
 }
 
 export async function queryMusixiser(params) {
   return request(
-    `https://api.octave-love.com/api/v1/admin/musixisers?page=${params.currentPage}&size=${
+    `//api.octave-love.com/api/v1/admin/musixisers?page=${params.currentPage}&size=${
     params.pageSize
     }`,
     {
@@ -185,7 +185,7 @@ export async function queryMusixiser(params) {
 }
 
 export async function removeMusixiser(params) {
-  return request(`https://api.octave-love.com/api/v1/admin/musixisers/${params.id}`, {
+  return request(`//api.octave-love.com/api/v1/admin/musixisers/${params.id}`, {
     method: 'DELETE',
     headers,
     body: {
@@ -197,7 +197,7 @@ export async function removeMusixiser(params) {
 }
 export async function updateMusixiser(params) {
   // TODO
-  // return request(`https://api.octave-love.com/api/v1/musixisers/${params.id}`, {
+  // return request(`//api.octave-love.com/api/v1/musixisers/${params.id}`, {
   //   method: 'POST',
   //   headers,
   //   body: {
@@ -219,7 +219,7 @@ export async function addMusixiser(params) {
 //产品接口
 
 export async function addProduct(params) {
-  return request(`https://api.octave-love.com/api/v1/admin/shop/products`, {
+  return request(`//api.octave-love.com/api/v1/admin/shop/products`, {
     method: 'POST',
     headers,
     body: params
@@ -228,7 +228,7 @@ export async function addProduct(params) {
 }
 
 export async function updateProduct(params) {
-  return request(`https://api.octave-love.com/api/v1/admin/shop/products`, {
+  return request(`//api.octave-love.com/api/v1/admin/shop/products`, {
     method: 'PUT',
     headers,
     body: params
@@ -238,14 +238,14 @@ export async function updateProduct(params) {
 
 export async function queryProduct(params) {
   console.log("queryProduct", params)
-  return request(`https://api.octave-love.com/api/v1/admin/shop/products?a=1&page=${params.currentPage}&size=${params.pageSize}`, {
+  return request(`//api.octave-love.com/api/v1/admin/shop/products?a=1&page=${params.currentPage}&size=${params.pageSize}`, {
     headers,
   }
   );
 }
 
 export async function removeProduct(params) {
-  return request(`https://api.octave-love.com/api/v1/admin/shop/products/${params.id}`, {
+  return request(`//api.octave-love.com/api/v1/admin/shop/products/${params.id}`, {
     method: 'DELETE',
     headers,
     body: {
@@ -258,14 +258,14 @@ export async function removeProduct(params) {
 
 export async function queryOrders(params) {
   console.log("queryOrders", params)
-  return request(`https://api.octave-love.com/api/v1/admin/shop/orders?a=1&page=${params.currentPage}&size=${params.pageSize}`, {
+  return request(`//api.octave-love.com/api/v1/admin/shop/orders?a=1&page=${params.currentPage}&size=${params.pageSize}`, {
     headers,
   }
   );
 }
 
 export async function updateOrders(params) {
-  return request(`https://api.octave-love.com/api/v1/admin/shop/orders`, {
+  return request(`//api.octave-love.com/api/v1/admin/shop/orders`, {
     method: 'PUT',
     headers,
     body: params

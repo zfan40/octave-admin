@@ -2,7 +2,8 @@ import React, { PureComponent, Fragment } from 'react';
 // import moment from 'moment';
 import { Table, Alert, Divider, Popconfirm, InputNumber } from 'antd';
 import styles from './index.less';
-import { buildModel, preview, buildModelWithParam, buildFactoryExcel } from '../../utils/magic';
+import { preview, buildModelWithParam, buildFactoryExcel } from '../../utils/magic';
+import { buildDisk20FromMidi } from '../../utils/magic20disk';
 import WorkModal from '../Editor/CreateWorkModal';
 // const statusMap = ['default', 'processing', 'success', 'error'];
 const DEFAULT_DOT_WIDTH = 0.6;
@@ -50,6 +51,7 @@ class WorkTable extends PureComponent {
     //   }
     // };
     /* midi file */
+    url = url.replace('img.musixise', 'img2.musixise') // temp fix for no certificate
     MidiConvert.load(url, (midi) => {
       if (!midi) {
         alert('文件有误');
@@ -60,6 +62,7 @@ class WorkTable extends PureComponent {
     });
   };
   buildModelFromFactoryExcel = (url, id) => {
+    url = url.replace('img.musixise', 'img2.musixise') // temp fix for no certificate
     MidiConvert.load(url, (midi) => {
       if (!midi) {
         alert('文件有误');
@@ -80,20 +83,8 @@ class WorkTable extends PureComponent {
     });
   }
   buildModelFromWorkUrl = (url, id) => {
-    /* txt file */
-    // const request = new XMLHttpRequest();
-    // request.open('GET', url, true);
-    // request.send(null);
-    // request.onreadystatechange = () => {
-    //   if (request.readyState === 4 && request.status === 200) {
-    //     const type = request.getResponseHeader('Content-Type');
-    //     if (type.indexOf('text') !== -1) {
-    //       buildModel(JSON.parse(request.responseText), id);
-    //     }
-    //   }
-    // };
     /* midi file */
-
+    url = url.replace('img.musixise', 'img2.musixise') // temp fix for no certificate
     MidiConvert.load(url, (midi) => {
       if (!midi) {
         alert('文件有误');
@@ -101,16 +92,17 @@ class WorkTable extends PureComponent {
       }
       const mergeNotes = midi.tracks.reduce((a, b) => a.concat(b.notes), []);
       console.warn('啦啦啦啦', JSON.stringify(mergeNotes))
-      buildModelWithParam(
-        mergeNotes,
-        id,
-        this.model_dot_width,
-        this.model_offset,
-        this.model_outer_radius,
-        this.model_inner_radius,
-        this.model_dot_height,
-        this.model_angle
-      );
+      buildDisk20FromMidi(mergeNotes)
+      // buildModelWithParam(
+      //   mergeNotes,
+      //   id,
+      //   this.model_dot_width,
+      //   this.model_offset,
+      //   this.model_outer_radius,
+      //   this.model_inner_radius,
+      //   this.model_dot_height,
+      //   this.model_angle
+      // );
     });
   };
   deleteWorkById = (id) => {

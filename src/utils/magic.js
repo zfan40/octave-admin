@@ -102,9 +102,53 @@ function getEasyPins(tasksObj) {
   });
   return musicboxPins;
 }
-function aoaToSheet(machines, factoryExcel) {
+
+/*
+* this function product yunsheng prod file
+* the file is a time based record, instead of tooth based factory Excel.
+* it behaves closer to how the pinning machine works, that is rotate the cylinder by timing
+* it also looks more like a score
+*/
+
+function _generateYunShengFile(factoryExcel) {
+  const timeBasedTeethRecord = {}
+  const orderedTimeBasedTeethRecord = {};
+
+  // step1. generate unsorted timeBasedTeethRecord
+  for (const tooth in factoryExcel) {
+    if (factoryExcel.hasOwnProperty(tooth)) {
+      const timings = factoryExcel[tooth];
+      timings.forEach(timing => {
+        const roundTiming = timing.toFixed(3)
+        if (!timeBasedTeethRecord[roundTiming]) {
+          timeBasedTeethRecord[roundTiming] = [tooth]
+        } else {
+          timeBasedTeethRecord[roundTiming].push(tooth)
+        }
+      })
+    }
+  }
+  //now, timeBasedTeethRecord is {2.005:['15'],1.335:['3,10']}
+
+  //step2. sort the record
+  Object.keys(timeBasedTeethRecord).sort((a, b) => +a - b).forEach(function (key) {
+    orderedTimeBasedTeethRecord[key] = timeBasedTeethRecord[key]
+  })
+  console.log(orderedTimeBasedTeethRecord)
+  //now orderedTimeBasedTeethRecord is {1.335:['3,10'],2.005:['15']}
+
+  //step3 dump to a .txt string
+  let txtString = '12.48   .9   18    0\n' //first line
+  txtString += Object.entries(orderedTimeBasedTeethRecord).reduce((a, b) => a.concat(`${b},0\n`), '')
+  txtString = txtString.replace(/,/g, '    ')
+  txtString += '0'
+  console.log(txtString)
+}
+function _aoaToSheet(machines, factoryExcel) {
   console.log(machines)
   console.log(factoryExcel)
+  // build 18a file for yunsheng 18
+  _generateYunShengFile(factoryExcel)
   console.log(Math.max(Object.values(factoryExcel).map(times => times.length)))//获取单音最大重复次数
   // const sheetName = 'sheet1';
   // const workbook = {
@@ -145,7 +189,7 @@ export function buildFactoryExcel(
   }
 
   // console.log('这个是生成excel需要的频率', JSON.stringify(machines))
-  // aoaToSheet();
+  // _aoaToSheet();
   const newGroups = taskTimeArrays.map((taskArray, index) => taskArray.map((item, itemIndex) => itemIndex % groups[index] + 1)) //避免潜在的风险，重新赋值，[2.353125, 4.7375, 16.741666666666667, 19.09791666666667],如果group是2 就对应成[1，2，1，2]，如果group是1，对应成[1,1,1,1]
   const finalBins = newGroups.reduce((a, b) => a.concat(b.map(item => item + Math.max(...a))));
   let finalTimings = taskTimeArrays.reduce((a, b) => a.concat(b)); // just flatten it
@@ -156,7 +200,7 @@ export function buildFactoryExcel(
     factoryExcel[bin].push(finalTimings[index] * 39.2 / 15) //乘下系数 39.2是音桶铺开长度，用38；15是音乐时间
   })
   console.log('这个是频率的时间', factoryExcel)
-  aoaToSheet(machines, factoryExcel)
+  _aoaToSheet(machines, factoryExcel)
 }
 export function buildModel(items, workId) {
   console.log('== Enter RealMagic ==');
@@ -408,7 +452,7 @@ export function buildModelWithParam(
   const script = `
     //底下低音,上面高音
   const DOT_WIDTH = ${DOT_WIDTH}
-  const RATIO = 0.96
+  const RATIO = 1
   const OFFSET = ${OFFSET} //1.95 is center
   const OUTER_RADIUS = ${OUTER_RADIUS}
   const INNER_RADIUS = ${INNER_RADIUS}

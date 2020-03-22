@@ -107,7 +107,7 @@ class WorkModal extends Component {
                 action="//api.octave-love.com/api/v1/picture/uploadPic"
                 listType="picture"
                 name="files"
-                beforeUpload={this.beforeUploadImage}
+                beforeUpload={this.beforeImageUpload}
                 defaultFileList={cover ? [{
                   uid: '-1',
                   name: '',
